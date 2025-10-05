@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Thả đèn Trung Thu</title>
+  <title>💞Thả đèn Trung Thu</title>
   <style>
     body {
       margin: 0;
@@ -159,25 +159,24 @@
       to { opacity: 0; transform: translate(-50%, -60%); }
     }
 
-    /* 🎶 Nút bật/tắt nhạc */
-    #musicBtn {
+   /* 🔘 Nút nhạc */
+    #music-btn {
       position: fixed;
       bottom: 20px;
-      right: 20px;
-      background: rgba(255,255,255,0.2);
+      left: 20px;
+      background: rgba(0,0,0,0.6);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.4);
-      border-radius: 50px;
-      padding: 10px 18px;
-      font-size: 16px;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
       cursor: pointer;
-      backdrop-filter: blur(6px);
-      transition: all 0.3s ease;
-      z-index: 1000;
+      font-size: 16px;
+      z-index: 200;
+      transition: 0.3s;
     }
-    #musicBtn:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
-    #musicBtn.music-on { background: rgba(255,200,80,0.3); }
-    #musicBtn.music-off { background: rgba(80,80,80,0.4); color: #ccc; }
+    #music-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
 
     /* 🌠 Sao băng thật với đuôi sáng và mờ dần */
     /* 🌠 Sao băng thật với đuôi sáng và mờ dần (trái → phải) */
@@ -223,21 +222,18 @@
   <!-- <div class="cloud"></div> -->
 
   <!-- 🎵 Nhạc nền -->
-  <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
-  <button id="musicBtn">🎶 Bật nhạc</button>
-
-
+  <button id="music-btn">🔊</button>
   <script>
     const lanternSrc = "./lantern.png";
 
     const wishes = [
-      "Trung Thu này anh chỉ muốn ở bên em thôi 🌕💞",
-      "Chúc em Trung Thu ngọt ngào như ánh trăng đêm nay 🍬✨",
-      "Anh không cần bánh, chỉ cần có em là đủ rồi 🥮💖",
-      "Ước gì được cùng em ngắm trăng đêm nay 🎑💕",
-      "Trăng rằm sáng nhất đêm nay, nhưng với anh em vẫn là người tỏa sáng hơn 🌙💫",
-      "Chúc em một đêm Trung Thu thật vui — và nhớ anh một chút nha 💌",
-      "Nếu có thể gửi điều ước lên trăng, anh sẽ ước được bên em mãi 🩵"
+      "Trung Thu này anh chỉ muốn ở bên cậu thôi 🌕💞",
+      "Chúc cậu Trung Thu ngọt ngào như ánh trăng đêm nay 🍬✨",
+      "Mình không cần bánh, chỉ cần có cậu là đủ rồi 🥮💖",
+      "Ước gì được cùng cậu ngắm trăng đêm nay 🎑💕",
+      "Trăng rằm sáng nhất đêm nay, nhưng với mình cậu vẫn là người tỏa sáng hơn 🌙💫",
+      "Chúc cậu một đêm Trung Thu thật vui — và nhớ mình một chút nha 💌",
+      "Nếu có thể gửi điều ước lên trăng, mình sẽ ước được bên cậu mãi 🩵"
     ];
 
     // 🌟 Tạo sao nền
@@ -298,46 +294,33 @@
 
     // 🎵 Xử lý nhạc nền
     // 🎵 Nhạc nền
-    const music = document.getElementById("bgMusic");
-    const btn = document.getElementById("musicBtn");
-    let isPlaying = false;
+    const audio = new Audio("./music.mp3");
+    audio.loop = true;
+    audio.volume = 0.5;
+    let musicStarted = false;
+    const musicBtn = document.getElementById("music-btn");
 
-    function updateButton() {
-      if (isPlaying) {
-        btn.textContent = "🔊 Đang phát";
-        btn.classList.add("music-on");
-        btn.classList.remove("music-off");
-      } else {
-        btn.textContent = "🔈 Bật nhạc";
-        btn.classList.remove("music-on");
-        btn.classList.add("music-off");
-      }
+    document.addEventListener("click", startMusicOnce, { once: true });
+    function startMusicOnce() {
+      audio.play().then(() => {
+        musicStarted = true;
+        musicBtn.textContent = "🔊";
+      }).catch(err => console.warn("Không thể phát nhạc tự động:", err));
     }
 
-    // Tự phát nếu được phép
-    window.addEventListener("load", () => {
-      music.volume = 0.6;
-      music.play()
-        .then(() => {
-          isPlaying = true;
-          updateButton();
-        })
-        .catch(() => {
-          isPlaying = false;
-          updateButton();
-        });
-    });
-
-    // Nút bật/tắt
-    btn.addEventListener("click", () => {
-      if (isPlaying) {
-        music.pause();
-        isPlaying = false;
-      } else {
-        music.play();
-        isPlaying = true;
+    musicBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!musicStarted) {
+        startMusicOnce();
+        return;
       }
-      updateButton();
+      if (audio.paused) {
+        audio.play();
+        musicBtn.textContent = "🔊 ";
+      } else {
+        audio.pause();
+        musicBtn.textContent = "🔇";
+      }
     });
 
     // 🌠 Tạo sao băng thật
