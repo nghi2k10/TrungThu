@@ -164,7 +164,7 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.2);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.4);
       border-radius: 50px;
@@ -175,22 +175,9 @@
       transition: all 0.3s ease;
       z-index: 1000;
     }
-
-    #musicBtn:hover {
-      background: rgba(255, 255, 255, 0.4);
-      transform: scale(1.05);
-    }
-
-    /* Trạng thái bật */
-    #musicBtn.music-on {
-      background: rgba(255, 200, 80, 0.3);
-    }
-
-    /* Trạng thái tắt */
-    #musicBtn.music-off {
-      background: rgba(80, 80, 80, 0.4);
-      color: #ccc;
-    }
+    #musicBtn:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+    #musicBtn.music-on { background: rgba(255,200,80,0.3); }
+    #musicBtn.music-off { background: rgba(80,80,80,0.4); color: #ccc; }
 
     /* 🌠 Sao băng thật với đuôi sáng và mờ dần */
     /* 🌠 Sao băng thật với đuôi sáng và mờ dần (trái → phải) */
@@ -310,43 +297,47 @@
     for (let i = 0; i < 5; i++) setTimeout(createLantern, i * 600);
 
     // 🎵 Xử lý nhạc nền
-    // 🎵 Tự động phát nhạc nền
-    // 🎵 Nhạc nền điều khiển bật/tắt
-    window.addEventListener("DOMContentLoaded", () => {
-      const music = document.getElementById("bgMusic");
-      const btn = document.getElementById("musicBtn");
-      let isPlaying = false;
+    // 🎵 Nhạc nền
+    const music = document.getElementById("bgMusic");
+    const btn = document.getElementById("musicBtn");
+    let isPlaying = false;
 
-      // Cố gắng tự phát nhạc khi load
-      music.play().then(() => {
-        isPlaying = true;
+    function updateButton() {
+      if (isPlaying) {
         btn.textContent = "🔊 Đang phát";
         btn.classList.add("music-on");
         btn.classList.remove("music-off");
-      }).catch(() => {
-        // Nếu bị chặn, hiển thị nút "Bật nhạc"
-        isPlaying = false;
+      } else {
         btn.textContent = "🔈 Bật nhạc";
         btn.classList.remove("music-on");
         btn.classList.add("music-off");
-      });
+      }
+    }
 
-      // Khi người dùng click nút
-      btn.addEventListener("click", () => {
-        if (isPlaying) {
-          music.pause();
-          btn.textContent = "🔈 Bật nhạc";
-          btn.classList.remove("music-on");
-          btn.classList.add("music-off");
-          isPlaying = false;
-        } else {
-          music.play();
-          btn.textContent = "🔊 Đang phát";
-          btn.classList.add("music-on");
-          btn.classList.remove("music-off");
+    // Tự phát nếu được phép
+    window.addEventListener("load", () => {
+      music.volume = 0.6;
+      music.play()
+        .then(() => {
           isPlaying = true;
-        }
-      });
+          updateButton();
+        })
+        .catch(() => {
+          isPlaying = false;
+          updateButton();
+        });
+    });
+
+    // Nút bật/tắt
+    btn.addEventListener("click", () => {
+      if (isPlaying) {
+        music.pause();
+        isPlaying = false;
+      } else {
+        music.play();
+        isPlaying = true;
+      }
+      updateButton();
     });
 
     // 🌠 Tạo sao băng thật
