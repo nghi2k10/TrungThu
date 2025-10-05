@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bầu Trời Trung Thu – Parallax Edition</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      height: 100vh;
+      background: linear-gradient(#000010, #0a1a2f);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* 🎑 Khung bầu trời chứa toàn bộ cảnh */
+    .sky {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      transform-origin: center center;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    /* 🌕 Mặt trăng */
+    .moon {
+      position: absolute;
+      top: 60px;
+      right: 60px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 30% 30%, #fff, #fef9c3 70%, #fce570 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 50px 20px rgba(255, 255, 200, 0.4);
+      z-index: 2;
+      animation: moonGlow 4s ease-in-out infinite alternate;
+    }
+    @keyframes moonGlow {
+      from { box-shadow: 0 0 40px 10px rgba(255, 255, 200, 0.3); }
+      to { box-shadow: 0 0 70px 25px rgba(255, 255, 200, 0.5); }
+    }
+
+    /* ☁️ Mây */
+    .cloud {
+      position: absolute;
+      top: 120px;
+      left: -300px;
+      width: 300px;
+      height: 100px;
+      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+      border-radius: 100px;
+      filter: blur(8px);
+      opacity: 0.6;
+      z-index: 1;
+      animation: cloudMove 45s linear infinite;
+    }
+    @keyframes cloudMove {
+      0% { left: -350px; opacity: 0.2; }
+      20% { opacity: 0.7; }
+      50% { opacity: 0.6; }
+      80% { opacity: 0.4; }
+      100% { left: 110vw; opacity: 0.1; }
+    }
+
+    /* 🌟 Sao */
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: twinkle 2s infinite ease-in-out alternate;
+      z-index: 0;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.2; }
+      to { opacity: 1; }
+    }
+
+    /* 🏮 Lồng đèn */
+    .lantern {
+      position: absolute;
+      bottom: -150px;
+      width: 60px;
+      height: auto;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 15px rgba(255, 120, 50, 0.9));
+      transform-origin: center bottom;
+      animation: flyAndSway linear forwards;
+      cursor: pointer;
+      z-index: 3;
+      transition: transform 0.3s ease;
+    }
+    @keyframes flyAndSway {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      50% { transform: translateY(-60vh) rotate(5deg) scale(1.1); }
+      100% { transform: translateY(-120vh) rotate(-5deg) scale(1.2); opacity: 0; }
+    }
+
+    /* 💬 Câu chúc */
+    .wish {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 1.2em;
+      animation: fadeIn 0.4s ease, fadeOut 0.4s ease 2.2s forwards;
+      z-index: 100;
+      text-align: center;
+      white-space: nowrap;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; transform: translate(-50%, -60%); } }
+
+    /* 🌠 Sao băng */
+    .shooting-star {
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(225deg, rgba(255,255,255,1), rgba(255,255,255,0));
+      border-radius: 50%;
+      opacity: 0.9;
+      transform: rotate(-45deg);
+      pointer-events: none;
+      z-index: 3;
+      animation: shoot 2s ease-out forwards;
+      filter: drop-shadow(0 0 6px white);
+    }
+    @keyframes shoot {
+      0% { transform: translate(0, 0) rotate(-45deg); opacity: 1; }
+      100% { transform: translate(600px, 300px) rotate(-45deg); opacity: 0; }
+    }
+
+    /* 🎵 Nút bật/tắt nhạc */
+    #music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 22px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: background 0.3s;
+      z-index: 200;
+    }
+    #music-btn:hover { background: rgba(255,255,255,0.3); }
+
+    /* 🌀 Xoay toàn cảnh + parallax */
+    .rotate-scene {
+      animation: spinScene 1.5s ease-in-out;
+    }
+    @keyframes spinScene {
+      0% { transform: rotate(0deg) scale(1); }
+      30% { transform: rotate(4deg) scale(1.02); }
+      60% { transform: rotate(-3deg) scale(1.02); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky">
+    <div class="moon"></div>
+    <!-- <div class="cloud"></div> -->
+  </div>
+
+  <button id="music-btn">🎵</button>
+  <audio id="bg-music" loop autoplay>
+    <source src="./music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const sky = document.querySelector('.sky');
+    const lanternSrc = "./lantern.png";
+    const wishes = [
+      "Trung Thu này anh chỉ muốn ở bên em thôi 🌕💞",
+      "Chúc em Trung Thu ngọt ngào như ánh trăng đêm nay 🍬✨",
+      "Anh không cần bánh, chỉ cần có em là đủ rồi 🥮💖",
+      "Ước gì được cùng em ngắm trăng đêm nay 🎑💕",
+      "Trăng rằm sáng nhất đêm nay, nhưng với anh em vẫn là người tỏa sáng hơn 🌙💫",
+      "Chúc em một đêm Trung Thu thật vui — và nhớ anh một chút nha 💌",
+      "Nếu có thể gửi điều ước lên trăng, anh sẽ ước được bên em mãi 🩵"
+    ];
+
+    // 🌟 Sao nền
+    for (let i = 0; i < 80; i++) {
+      const s = document.createElement("div");
+      s.className = "star";
+      const size = Math.random() * 2 + 1;
+      s.style.width = s.style.height = size + "px";
+      s.style.left = Math.random() * 100 + "vw";
+      s.style.top = Math.random() * 100 + "vh";
+      s.style.animationDelay = Math.random() * 2 + "s";
+      sky.appendChild(s);
+    }
+
+    // 🏮 Lồng đèn
+    function createLantern() {
+      const lantern = document.createElement("img");
+      lantern.src = lanternSrc;
+      lantern.className = "lantern";
+      lantern.style.left = Math.random() * 90 + "vw";
+      const size = 40 + Math.random() * 60;
+      lantern.style.width = size + "px";
+      const duration = 10 + Math.random() * 10;
+      lantern.style.animationDuration = duration + "s";
+      lantern.addEventListener("click", e => {
+        e.stopPropagation();
+        lantern.style.transform = "scale(1.4) rotate(0deg)";
+        setTimeout(() => {
+          lantern.style.transform = "scale(1)";
+        }, 300);
+        const wishText = wishes[Math.floor(Math.random() * wishes.length)];
+        const w = document.createElement("div");
+        w.className = "wish";
+        w.textContent = wishText;
+        document.body.appendChild(w);
+        setTimeout(() => w.remove(), 2600);
+      });
+      sky.appendChild(lantern);
+      setTimeout(() => lantern.remove(), duration * 1000);
+    }
+    setInterval(createLantern, 900);
+    for (let i = 0; i < 5; i++) setTimeout(createLantern, i * 600);
+
+    // 🌠 Sao băng kép
+    function createShootingStar() {
+      const star = document.createElement('div');
+      star.classList.add('shooting-star');
+      const startTop = Math.random() * window.innerHeight * 0.4;
+      const startLeft = Math.random() * window.innerWidth * 0.8;
+      const colors = ['rgba(255,255,255,1)','rgba(255,240,180,1)','rgba(180,220,255,1)'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      star.style.background = `linear-gradient(225deg, ${color}, rgba(255,255,255,0))`;
+      const length = 80 + Math.random() * 100;
+      const duration = 1.5 + Math.random() * 1.5;
+      star.style.height = `${length}px`;
+      star.style.top = `${startTop}px`;
+      star.style.left = `${startLeft}px`;
+      star.style.animationDuration = `${duration}s`;
+      sky.appendChild(star);
+      setTimeout(() => star.remove(), duration * 1000);
+    }
+    function createMeteorShower() {
+      const count = Math.random() < 0.7 ? 1 : (Math.random() < 0.5 ? 2 : 3);
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => createShootingStar(), i * 200);
+      }
+    }
+    setInterval(() => {
+      if (Math.random() < 0.5) createMeteorShower();
+    }, 2000);
+
+    // 🎵 Nút nhạc
+    const music = document.getElementById("bg-music");
+    const btn = document.getElementById("music-btn");
+    let isPlaying = true;
+    btn.onclick = () => {
+      if (isPlaying) { music.pause(); btn.textContent = "🔇"; }
+      else { music.play(); btn.textContent = "🎵"; }
+      isPlaying = !isPlaying;
+    };
+
+    // 🌀 Hiệu ứng xoay toàn cảnh + parallax nhẹ
+    document.addEventListener('click', () => {
+      if (!sky.classList.contains('rotate-scene')) {
+        sky.classList.add('rotate-scene');
+        // Parallax rung nhẹ từng lớp
+        sky.querySelectorAll('.star, .moon, .cloud, .lantern').forEach(el => {
+          el.style.transition = "transform 0.5s ease";
+          const x = (Math.random() - 0.5) * 10;
+          const y = (Math.random() - 0.5) * 10;
+          el.style.transform = `translate(${x}px, ${y}px)`;
+          setTimeout(() => el.style.transform = "", 600);
+        });
+        setTimeout(() => sky.classList.remove('rotate-scene'), 1500);
+      }
+    });
+  </script>
+</body>
+</html>
